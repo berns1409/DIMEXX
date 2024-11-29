@@ -13,21 +13,27 @@ import matplotlib.pyplot as plt
 
 # Configuración de Google Sheets
 def connect_to_google_sheets():
-   """
-   Conecta con Google Sheets usando Google-auth y gspread.
-   """
-   # Define el alcance de las APIs de Google
-   scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
-  
-   # Carga las credenciales desde el archivo JSON
-   creds = Credentials.from_service_account_file(
-       "credible-datum-442414-s7-9884e655f763.json", scopes=scope
-   )
-   client = gspread.authorize(creds)
-  
-   # Abre la hoja de cálculo usando su URL
-   workbook = client.open_by_url("https://docs.google.com/spreadsheets/d/1qWLv0qu59X4dyjz8kdctHy-V2AhkO7ZUB7rVOC8mYfo/edit?gid=0")
-   return workbook
+    """
+    Conecta con Google Sheets usando Google-auth y gspread.
+    """
+    import json
+    import gspread
+    from google.oauth2.service_account import Credentials
+    import streamlit as st
+
+    # Define el alcance de las APIs de Google
+    scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
+
+    # Carga las credenciales desde los secretos de Streamlit
+    creds_info = st.secrets["gcp_service_account"]
+    creds = Credentials.from_service_account_info(json.loads(creds_info), scopes=scope)
+
+    # Autoriza el cliente de gspread con las credenciales
+    client = gspread.authorize(creds)
+
+    # Abre la hoja de cálculo usando su URL
+    workbook = client.open_by_url("https://docs.google.com/spreadsheets/d/1qWLv0qu59X4dyjz8kdctHy-V2AhkO7ZUB7rVOC8mYfo/edit?gid=0")
+    return workbook
 
 
 # Cargar animación Lottie desde un archivo o URL
